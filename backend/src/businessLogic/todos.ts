@@ -12,12 +12,10 @@ export async function getAllTodos(jwtToken: string): Promise<TodoItem[]> {
 }
 export async function createTodo(
     createGroupRequest: CreateTodoRequest,
-    jwtToken: string
+    userId: string
 ): Promise<TodoItem> {
 
-    const todoId = uuid.v4()
-    const userId = parseUserId(jwtToken)
-
+    const todoId = uuid.v4();
     return await todoItemAccess.createTodoItem({
         todoId: todoId,
         userId: userId,

@@ -3,6 +3,7 @@ import { TodoItem} from "../models/TodoItem";
 import { TodoItemAccess} from "../dataLayer/todoItemAccess";
 import { CreateTodoRequest } from "../requests/CreateTodoRequest";
 import { parseUserId} from "../auth/utils";
+import {TodoUpdate} from "../models/TodoUpdate";
 
 const todoItemAccess= new TodoItemAccess();
 
@@ -21,8 +22,11 @@ export async function createTodo(
         userId: userId,
         name: createGroupRequest.name,
         createdAt: new Date().toISOString(),
-        dueDate: new Date().toISOString(),
+        dueDate: createGroupRequest.dueDate,
         done: false,
         attachmentUrl:null
     })
+}
+export async function updateTodo(todoId: string, todoUpdate: TodoUpdate):Promise<TodoUpdate>{
+    return await todoItemAccess.updateTodoItem(todoId,todoUpdate);
 }

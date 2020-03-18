@@ -36,3 +36,8 @@ export async function updateTodo(todoId: string, todoUpdate: TodoUpdate): Promis
 export async function deleteTodoItem(todoId: string) {
     return await todoItemAccess.deleteTodoItem(todoId)
 }
+
+export async function uploadAttachment(todoId: string) {
+    const imageId = uuid.v4();
+    return await todoItemAccess.s3FileUpload(todoId, imageId)
+}

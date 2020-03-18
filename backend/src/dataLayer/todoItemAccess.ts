@@ -7,6 +7,7 @@ const XAWS = AWSXRay.captureAWS(AWS)
 import {TodoItem} from "../models/TodoItem";
 import {TodoUpdate} from "../models/TodoUpdate";
 
+
 export class TodoItemAccess {
 
     constructor(
@@ -65,6 +66,39 @@ export class TodoItemAccess {
         }).promise()
 
         return todo
+    }
+
+    async s3FileUpload(todoId: string, imageId: string) {
+        const bucket = process.env.S3_BUCKET
+        const url_exp = process.env.SIGNED_URL_EXPIRATION
+
+        const s3 = new AWS.S3({
+            signatureVersion: 'v4'
+        });
+
+        const url = s3.getSignedUrl('putObject', {
+            Bucket: bucket,
+            Key: imageId,
+            Expires: url_exp
+        });
+
+        const imageUrl = `https://${bucket}.s3.amazonaws.com/${imageId}`;
+        await this.docClient.update({
+            TableName: this.todoTable,
+            Key: {todoId: todoId},
+            UpdateExpression: "set attachmentUrl = :a",
+            ExpressionAttributeValues: {
+                ":a": imageUrl
+            },
+            ReturnValues: "UPDATED_NEW"
+        }).promise();
+
+        return {
+            imageUrl: imageUrl,
+            uploadUrl: url
+        }
+
+
     }
 
 }

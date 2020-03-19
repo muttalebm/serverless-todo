@@ -16,6 +16,7 @@ provider:
 
   environment:
     RSA256CERT:
+
     TODO_TABLE: Todos-${self:provider.stage}
     S3_BUCKET: muttalebm-cfit-serverless-1906-${self:provider.stage}
 
@@ -91,6 +92,7 @@ functions:
       - http:
           method: post
           path: todos/{todoId}/attachment
+          cors: true
     iamRoleStatements:
       - Effect: Allow
         Action:

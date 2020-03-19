@@ -41,8 +41,8 @@ export class TodoItemAccess {
         return items as TodoItem[]
     }
 
-    async updateTodoItem(todoId: string, todoUpdate: TodoUpdate): Promise<TodoUpdate> {
-        await this.docClient.update({
+    async updateTodoItem(todoId: string, todoUpdate: TodoUpdate): Promise<TodoItem> {
+        const todoItem=await this.docClient.update({
             TableName: this.todoTable,
             Key: {"todoId": todoId},
             UpdateExpression: "set #n = :a, dueDate = :b, done = :c",
@@ -52,11 +52,11 @@ export class TodoItemAccess {
                 ":c": todoUpdate.done
             },
             ExpressionAttributeNames: {
-                "#n": "name"
+                "#n": "name",
             },
             ReturnValues: "UPDATED_NEW"
-        });
-        return todoUpdate;
+        }).promise();
+        return todoItem;
     }
 
     async createTodoItem(todo: TodoItem): Promise<TodoItem> {

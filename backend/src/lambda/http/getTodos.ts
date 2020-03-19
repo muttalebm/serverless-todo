@@ -7,7 +7,7 @@ import { getUserId} from "../utils";
 export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
     console.log('event:', event)
     const userId = getUserId(event);
-    const todos = getAllTodos(userId);
+    const todos = await getAllTodos(userId);
     return {
         statusCode: 200,
         headers: {

@@ -16,6 +16,7 @@ export class TodoItemAccess {
     }
 
     async deleteTodoItem(todoId: string) {
+        console.log("Delete Item with ID: ", todoId)
         await this.docClient.delete({
             TableName: this.todoTable,
             Key: {
@@ -38,10 +39,14 @@ export class TodoItemAccess {
         }).promise()
 
         const items = result.Items
+        console.log('Retrieved Item:', items)
+
         return items as TodoItem[]
     }
 
-    async updateTodoItem(todoId: string, todoUpdate: TodoUpdate): Promise<TodoItem> {
+    async updateTodoItem(todoId: string, todoUpdate: TodoUpdate): Promise<TodoUpdate> {
+        console.log('Updating Todo using ID: ', todoId)
+
         const todoItem=await this.docClient.update({
             TableName: this.todoTable,
             Key: {"todoId": todoId},
@@ -56,10 +61,12 @@ export class TodoItemAccess {
             },
             ReturnValues: "UPDATED_NEW"
         }).promise();
-        return todoItem;
+        console.log('Updating Todo using ID: ', todoId)
+        return todoItem as TodoUpdate;
     }
 
     async createTodoItem(todo: TodoItem): Promise<TodoItem> {
+        console.log('Create Todo using Data: ', todo)
         await this.docClient.put({
             TableName: this.todoTable,
             Item: todo
@@ -69,6 +76,7 @@ export class TodoItemAccess {
     }
 
     async s3FileUpload(todoId: string, imageId: string) {
+        console.log('S3 upload')
         const bucket = process.env.S3_BUCKET
         const url_exp = process.env.SIGNED_URL_EXPIRATION
 
@@ -81,7 +89,7 @@ export class TodoItemAccess {
             Key: imageId,
             Expires: url_exp
         });
-
+        console.log('Signed URL: ', url)
         const imageUrl = `https://${bucket}.s3.amazonaws.com/${imageId}`;
         await this.docClient.update({
             TableName: this.todoTable,
